@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Slider</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #FFF0F5; }
+        .slider-container { position: relative; width: 80%; max-width: 600px; overflow: hidden; border-radius: 10px; }
+        .slider { display: flex; transition: transform 0.5s ease-in-out; }
+        .slide { min-width: 100%; }
+        .slide img { width: 100%; border-radius: 10px; }
+        .prev, .next {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(0,0,0,0.5); color: white; border: none; padding: 10px;
+            cursor: pointer; font-size: 20px; border-radius: 5px;
+        }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+        .thumbnails { display: flex; justify-content: center; margin-top: 10px; }
+        .thumbnail { width: 50px; height: 50px; margin: 5px; cursor: pointer; opacity: 0.6; border-radius: 5px; }
+        .thumbnail.active { opacity: 1; border: 2px solid #000; }
+        .caption { text-align: center; margin-top: 10px; font-size: 20px; }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slider"></div>
+        <button class="prev">&#10094;</button>
+        <button class="next">&#10095;</button>
+        <div class="caption"></div>
+        <div class="thumbnails"></div>
+    </div>
+
+    <script>
+        const images = [
+            { src: "pic1.jpg", caption: "Photo 1" },
+            { src: "pic2.jpeg", caption: "Photo 2" },
+            { src: "pic3.jpg", caption: "Photo 3" },
+            { src: "pic4.jpeg", caption: "Photo 4" },
+            { src: "pic5.jpeg", caption: "Photo 5" }
+        ];
+
+        const slider = document.querySelector('.slider');
+        const thumbnailsContainer = document.querySelector('.thumbnails');
+        const caption = document.querySelector('.caption');
+        const nextButton = document.querySelector('.next');
+        const prevButton = document.querySelector('.prev');
+        let index = 0;
+        let autoSlide;
+
+        // Function to render slides and thumbnails
+        function renderSlides() {
+            slider.innerHTML = images.map(img => `<div class='slide'><img src='${img.src}'></div>`).join('');
+            thumbnailsContainer.innerHTML = images.map((img, i) => `<img class='thumbnail' data-index='${i}' src='${img.src}'>`).join('');
+            updateSlide();
+        }
+
+        // Function to show the slide based on index
+        function showSlide(i) {
+            index = (i + images.length) % images.length;
+            slider.style.transform = `translateX(-${index * 100}%)`;
+            updateSlide();
+        }
+
+        // Function to update the active slide and caption
+        function updateSlide() {
+            caption.textContent = images[index].caption;
+            document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+        }
+
+        // Start automatic slide
+        function startAutoSlide() {
+            autoSlide = setInterval(() => showSlide(index + 1), 3000);
+        }
+
+        // Stop automatic slide
+        function stopAutoSlide() {
+            clearInterval(autoSlide);
+        }
+
+        // Event Listeners for next and previous buttons
+        nextButton.addEventListener('click', () => {
+            showSlide(index + 1);
+            stopAutoSlide();
+            startAutoSlide();
+        });
+
+        prevButton.addEventListener('click', () => {
+            showSlide(index - 1);
+            stopAutoSlide();
+            startAutoSlide();
+        });
+
+        // Event Listener for thumbnail clicks
+        thumbnailsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('thumbnail')) {
+                showSlide(parseInt(e.target.getAttribute('data-index')));
+                stopAutoSlide();
+                startAutoSlide();
+            }
+        });
+
+        // Initialize slider
+        renderSlides();
+        startAutoSlide();
+    </script>
+</body>
+</html>
