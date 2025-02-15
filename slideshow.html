@@ -49,22 +49,17 @@
         const prevButton = document.querySelector('.prev');
         let index = 0;
         let autoSlide;
-
-        // Function to render slides and thumbnails
         function renderSlides() {
             slider.innerHTML = images.map(img => `<div class='slide'><img src='${img.src}'></div>`).join('');
             thumbnailsContainer.innerHTML = images.map((img, i) => `<img class='thumbnail' data-index='${i}' src='${img.src}'>`).join('');
             updateSlide();
         }
-
-        // Function to show the slide based on index
         function showSlide(i) {
             index = (i + images.length) % images.length;
             slider.style.transform = `translateX(-${index * 100}%)`;
             updateSlide();
         }
 
-        // Function to update the active slide and caption
         function updateSlide() {
             caption.textContent = images[index].caption;
             document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
@@ -72,17 +67,14 @@
             });
         }
 
-        // Start automatic slide
         function startAutoSlide() {
             autoSlide = setInterval(() => showSlide(index + 1), 3000);
         }
 
-        // Stop automatic slide
         function stopAutoSlide() {
             clearInterval(autoSlide);
         }
 
-        // Event Listeners for next and previous buttons
         nextButton.addEventListener('click', () => {
             showSlide(index + 1);
             stopAutoSlide();
@@ -95,7 +87,6 @@
             startAutoSlide();
         });
 
-        // Event Listener for thumbnail clicks
         thumbnailsContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('thumbnail')) {
                 showSlide(parseInt(e.target.getAttribute('data-index')));
@@ -103,8 +94,6 @@
                 startAutoSlide();
             }
         });
-
-        // Initialize slider
         renderSlides();
         startAutoSlide();
     </script>
